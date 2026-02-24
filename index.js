@@ -2,95 +2,53 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-const mongoose = require('mongoose'); // Añadimos Mongoose
+const mongoose = require('mongoose');
 
 const app = express();
 app.use(cors());
 const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST"] } });
 
-const io = new Server(server, {
-    cors: {
-        origin: "*", 
-        methods: ["GET", "POST"]
-    }
-});
-
-// --- CONEXIÓN A MONGODB ---
-// Recuerda configurar MONGO_URI en las variables de entorno de Render
+// --- CONEXIÓN MONGODB ---
 const MONGO_URI = process.env.MONGO_URI || "TU_CADENA_DE_CONEXION_AQUI";
+mongoose.connect(MONGO_URI).then(() => console.log("📡 DB_CONNECTED")).catch(e => console.log(e));
 
-mongoose.connect(MONGO_URI)
-    .then(() => console.log("📡 CONNECTED_TO_AERONET_DATABASE"))
-    .catch(err => console.error("❌ DATABASE_CONNECTION_ERROR:", err));
-
-// Esquema para guardar los trazos
 const TrazoSchema = new mongoose.Schema({
-    x: Number,
-    y: Number,
-    lastX: Number,
-    lastY: Number,
+    inicio: { x: Number, y: Number },
+    fin: { x: Number, y: Number },
     color: String,
+    grosor: Number,
     tipo: String,
     timestamp: { type: Date, default: Date.now }
 });
 const Trazo = mongoose.model('Trazo', TrazoSchema);
 
-// --- LÓGICA DEL SISTEMA ---
+// --- LÓGICA ---
 let connectedUsers = 0;
 
-setInterval(async () => {
-    const ahora = new Date();
-    const min = ahora.getMinutes();
-    const seg = ahora.getSeconds();
-    
-    if (min === 59 && seg === 0) {
-        io.emit('mensaje-recibido', { user: "SYSTEM", text: "⚠️ WARNING: DATABASE PURGE IN 60s", avatar: "https://cdn-icons-png.flaticon.com/512/3950/3950815.png" });
-    }
-    if (min === 59 && seg >= 50) {
-        io.emit('cuenta-atras', 60 - seg);
-    }
-    if (min === 0 && seg === 0) {
-        await Trazo.deleteMany({}); // Borra la base de datos físicamente
-        io.emit('pizarra-limpia');
-        io.emit('mensaje-recibido', { user: "SYSTEM", text: "🔄 MEMORY WIPED. NEW CYCLE STARTED.", avatar: "https://cdn-icons-png.flaticon.com/512/3950/3950815.png" });
-    }
-}, 1000);
-
-// --- GESTIÓN DE SOCKETS ---
 io.on('connection', async (socket) => {
     connectedUsers++;
     io.emit('update-user-count', connectedUsers);
 
-    // 1. Enviar los dibujos guardados al nuevo usuario
-    try {
-        const historial = await Trazo.find().sort({ timestamp: 1 });
-        historial.forEach(linea => {
-            socket.emit('linea-received', linea);
-        });
-    } catch (err) {
-        console.error("Error cargando historial:", err);
-    }
-
-    socket.on('mouse-move', (data) => {
-        socket.broadcast.emit('ghost-move', { id: socket.id, ...data });
-    });
+    // Enviar historial al entrar
+    const historial = await Trazo.find().sort({ timestamp: 1 });
+    historial.forEach(t => socket.emit('linea-received', t));
 
     socket.on('dibujar-linea', async (data) => {
         socket.broadcast.emit('linea-received', data);
-        // 2. Guardar el trazo en la base de datos
-        const nuevoTrazo = new Trazo(data);
-        await nuevoTrazo.save();
+        await new Trazo(data).save(); // Persistencia
     });
 
     socket.on('enviar-mensaje', (data) => {
-        io.emit('mensaje-recibido', { ...data, socketId: socket.id, isPrivate: false });
+        io.emit('mensaje-recibido', { ...data, socketId: socket.id });
     });
 
     socket.on('enviar-privado', (data) => {
-        socket.to(data.toId).emit('mensaje-privado-recibido', {
-            ...data,
-            fromId: socket.id 
-        });
+        socket.to(data.toId).emit('mensaje-privado-recibido', { ...data, fromId: socket.id });
+    });
+
+    socket.on('mouse-move', (data) => {
+        socket.broadcast.emit('ghost-move', { id: socket.id, ...data });
     });
 
     socket.on('disconnect', () => {
@@ -100,7 +58,4 @@ io.on('connection', async (socket) => {
     });
 });
 
-const PORT = process.env.PORT || 10000;
-server.listen(PORT, () => {
-    console.log(`🚀 AERONET_SERVER_ACTIVE_ON_PORT_${PORT}`);
-});
+server.listen(process.env.PORT || 10000, () => console.log("🚀 SERVER_RUNNING"));
