@@ -115,10 +115,12 @@
                 <span>AERONET_ACCESS</span><span>V.4.0</span>
             </div>
             <div class="layout">
-                <div class="surveillance-vid-container" onclick="openAvatarModal()">
-                    <img id="current-avatar-img" src="avatars/avatar (1).jpg" alt="Avatar">
-                    <div class="change-hint">SELECT AVATAR</div>
-                </div>
+               <div class="surveillance-vid-container" onclick="openAvatarModal()" style="border: 2px dashed var(--neon); cursor: pointer;">
+    <img id="current-avatar-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar" style="opacity: 0.6;">
+    <div id="avatar-status-text" style="position: absolute; bottom: 5px; width: 100%; text-align: center; color: var(--neon); font-size: 10px; font-weight: bold;">
+        [ SELECT AVATAR ]
+    </div>
+</div>
                 <div class="data-fields">
                     <div class="row"><span>STATUS:</span> <span style="color:var(--neon)">TOP SECRET</span></div>
                     <div class="row"><span>UNIT_ID:</span> <span id="display-temp-user">UNKNOWN</span></div>
@@ -184,3 +186,4 @@
 </body>
 
 </html>
+
