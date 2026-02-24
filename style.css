@@ -31,7 +31,8 @@ body {
     border: 1px solid var(--neon-border);
     box-shadow: 0 0 15px var(--neon-dim), inset 0 0 10px var(--neon-dim);
     backdrop-filter: blur(5px);
-    z-index: 1000; /* Asegura que estén sobre el canvas */
+    z-index: 9999; /* Asegura que estén sobre el canvas */
+    pointer-events: auto;
 }
 
 /* --- CHAT MEJORADO --- */
