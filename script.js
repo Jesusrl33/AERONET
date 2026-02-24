@@ -3,7 +3,7 @@ const canvas = document.getElementById('pizarra');
 const ctx = canvas.getContext('2d');
 
 let usuarioActual = "";
-let avatarActual = "avatars/avatar (1).jpg"; 
+let avatarActual = "avatars/avatar ().jpg"; 
 let avatarSeleccionadoTemp = avatarActual;
 
 let dibujando = false, ultimoPunto = null, gotas = 5, tiempo = 60, tipoPincel = "normal";
@@ -200,3 +200,4 @@ socket.on('linea-received', d => dibujar(d));
 
 
 initAvatarGrid();
+
