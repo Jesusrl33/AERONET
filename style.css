@@ -138,3 +138,44 @@ canvas { width: 100%; height: 100%; cursor: crosshair; }
 .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 250px; overflow-y: auto; padding: 10px; }
 .avatar-option { width: 100%; aspect-ratio: 1; border: 2px solid #333; cursor: pointer; object-fit: cover; }
 .avatar-option.selected { border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+/* Contenedor para centrar ambos paneles */
+.login-container {
+    display: flex;
+    gap: 30px;
+    align-items: stretch;
+    max-width: 800px;
+    padding: 20px;
+}
+
+/* Ajustes para el panel de información */
+.info-panel {
+    text-align: left;
+    background: rgba(0, 5, 0, 0.9) !important;
+    border-style: double; /* Le da un toque distinto al borde */
+}
+
+.status-line {
+    font-size: 14px;
+    color: var(--neon);
+    margin-bottom: 5px;
+    border-left: 3px solid var(--neon);
+    padding-left: 10px;
+}
+
+/* Efecto de parpadeo de cursor */
+.blink {
+    animation: blink-animation 1s steps(2, start) infinite;
+    margin-top: 20px;
+}
+
+@keyframes blink-animation {
+    to { visibility: hidden; }
+}
+
+/* Responsivo: Si la pantalla es pequeña, se ponen uno arriba de otro */
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
