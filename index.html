@@ -3,35 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AERONET_V4</title>
+    <title>AERONET_CORE_V4</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="coords">LAT: 0.0000 | LON: 0.0000</div>
-    
+    <div id="coords" style="position:fixed; top:10px; right:15px; z-index:1000; font-size:14px; color:black;">LAT: 0.0000 | LON: 0.0000</div>
+
     <div id="login-screen">
         <div class="card-inner">
-            <h2 style="border-bottom: 2px solid #00ff41; padding-bottom: 10px;">AERONET_LOGIN</h2>
+            <div style="display:flex; justify-content:space-between; border-bottom:2px solid var(--neon); margin-bottom:20px;">
+                <span style="font-size:24px;">AERONET_SYSTEM</span>
+                <span>V4.0</span>
+            </div>
             <div class="login-layout">
                 <div class="avatar-preview-box" onclick="openAvatarModal()">
                     <img id="current-avatar-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
-                    <div class="hint">[ SELECT_AVATAR ]</div>
+                    <div style="position:absolute; bottom:0; width:100%; background:var(--neon); color:#000; text-align:center; font-size:12px; font-weight:bold;">SELECT</div>
                 </div>
                 <div class="info-box">
-                    <p>STATUS: <span style="color:#00ff41">WAITING...</span></p>
-                    <p>ID: <span id="temp-id">UNKNOWN</span></p>
+                    <p>STATUS: <span style="color:var(--neon)">ENCRYPTED</span></p>
+                    <p>UNIT: <span id="temp-id">UNKNOWN</span></p>
+                    <p>SECTOR: 7-B</p>
                 </div>
             </div>
-            <input type="text" id="username" placeholder="IDENT_SUBJECT..." oninput="document.getElementById('temp-id').innerText = this.value">
+            <input type="text" id="username" placeholder="IDENT_SUBJECT..." autocomplete="off" oninput="document.getElementById('temp-id').innerText = this.value || 'UNKNOWN'">
             <button onclick="entrar()">INITIATE_UPLINK</button>
         </div>
     </div>
 
     <div id="avatar-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">SELECT_UNIT <span onclick="closeAvatarModal()" style="cursor:pointer">[X]</span></div>
-            <div class="avatar-grid" id="avatar-grid"></div>
-            <button onclick="confirmAvatarSelection()" class="confirm-btn">CONFIRM_SELECTION</button>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--neon); padding-bottom:5px;">
+                <span>SELECT_UNIT_AVATAR</span>
+                <span onclick="closeAvatarModal()" style="cursor:pointer">[X]</span>
+            </div>
+            <div class="avatar-grid" id="avatar-grid-container"></div>
+            <button onclick="confirmAvatarSelection()">CONFIRM_UNIT</button>
         </div>
     </div>
 
@@ -43,23 +50,16 @@
             <input type="color" id="colorPicker" value="#00ff41">
         </div>
 
-        <div id="status-bar" class="panel">
-            <span>DROPS: <span id="drops">5</span>/5</span>
-            <span>SYNC: <span id="timer">60</span>s</span>
-        </div>
-
         <div id="chat-window" class="panel">
-            <div class="chat-header">NET_MSG <span id="user-count">ONLINE: 0</span></div>
+            <div style="background:var(--neon); color:#000; padding:5px; font-weight:bold; font-size:14px;">NETWORK_CHAT</div>
             <div id="messages"></div>
             <input type="text" id="msg-input" placeholder="SEND_DATA..." autocomplete="off">
         </div>
 
-        <div id="private-chats-container"></div>
-
         <div id="taskbar" class="panel">
             <img id="taskbar-avatar" src="">
-            <span>SYS: <span style="color:#00ff41">ONLINE</span> // USER: <span id="display-user"></span></span>
-            <span onclick="location.reload()" style="color:red; cursor:pointer">[LOGOUT]</span>
+            <span style="font-size:14px;">SYS: <span style="color:var(--neon)">CONNECTED</span> // USER: <span id="display-user"></span></span>
+            <span onclick="location.reload()" style="margin-left:auto; color:red; cursor:pointer; font-weight:bold;">[LOGOUT]</span>
         </div>
         <canvas id="pizarra"></canvas>
     </div>
