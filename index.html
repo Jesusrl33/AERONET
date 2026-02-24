@@ -34,7 +34,11 @@
     </div>
 
     <div id="main-ui" style="display:none">
-        <canvas id="pizarra"></canvas>
+        <div class="monitor-frame">
+        <div class="monitor-screen">
+           <div class="scanline"></div> <canvas id="pizarra"></canvas>
+        </div>
+    </div>
 
         <div id="toolbar" class="panel">
             <button class="tool-btn active" onclick="setTipo('normal', this)">PEN</button>
@@ -70,4 +74,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
