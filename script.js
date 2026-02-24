@@ -1,4 +1,4 @@
-const socket = io('http://localhost:4000');
+const socket = io('https://aeronet-v4.onrender.com');
 const canvas = document.getElementById('pizarra');
 const ctx = canvas.getContext('2d');
 
@@ -197,5 +197,6 @@ socket.on('ghost-disconnect', id => document.getElementById(`ghost-${id}`)?.remo
 socket.on('cuenta-atras', s => { document.getElementById('countdown-alert').style.display = 'block'; document.getElementById('count-num').innerText = s; });
 socket.on('pizarra-limpia', () => ctx.clearRect(0,0,canvas.width, canvas.height));
 socket.on('linea-received', d => dibujar(d));
+
 
 initAvatarGrid();
