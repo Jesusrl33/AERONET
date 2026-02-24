@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AERONET_CORE_V4</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --neon: #00ff41;
+            --neon-dim: rgba(0, 255, 65, 0.2);
+            --dark-bg: rgba(5, 10, 5, 0.95);
+            --private: #ff00ff;
+        }
+
+        body {
+            margin: 0; overflow: hidden; background: #fff; font-family: 'VT323', monospace; text-transform: uppercase;
+        }
+
+        /* ================= LOGIN SCREEN ================= */
+        #login-screen {
+            position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center;
+            background: url('backgroundlogingif/gif1.gif') no-repeat center center;
+            background-size: cover;
+        }
+        .card-inner {
+            background: rgba(0,15,0,0.9); padding: 30px; border: 2px solid var(--neon);
+            backdrop-filter: blur(10px); color: var(--neon); width: 500px;
+            box-shadow: 0 0 30px var(--neon-dim);
+        }
+        .card-inner input { width: 100%; background: none; border: 1px solid var(--neon); color: var(--neon); padding: 10px; font-family: 'VT323'; font-size: 20px; box-sizing: border-box; }
+        .card-inner button { width: 100%; background: var(--neon); border: none; color: black; padding: 10px; font-family: 'VT323'; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+        .layout { display: flex; gap: 25px; margin-bottom: 25px; }
+        .surveillance-vid-container { position: relative; width: 160px; height: 160px; cursor: pointer; border: 2px solid var(--neon); }
+        #current-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: sepia(1) hue-rotate(90deg) contrast(1.2); }
+        .change-hint { position: absolute; inset: 0; background: rgba(0,255,65,0.5); color: black; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; font-weight: bold; font-size: 20px; }
+        .surveillance-vid-container:hover .change-hint { opacity: 1; }
+        .data-fields { flex: 1; font-size: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        .row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--neon-dim); padding-bottom: 5px; }
+
+        /* ================= AVATAR MODAL ================= */
+        #avatar-modal {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 420px; z-index: 3000; background: #000; border: 3px solid var(--neon);
+        }
+        .modal-header { background: var(--neon); color: black; padding: 5px 10px; font-weight: bold; display: flex; justify-content: space-between; }
+        .modal-body { padding: 15px; max-height: 400px; overflow-y: auto; }
+        .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .avatar-option { width: 100%; aspect-ratio: 1; border: 2px solid var(--neon-dim); cursor: pointer; transition: 0.2s; overflow: hidden; }
+        .avatar-option img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.5); }
+        .avatar-option.selected { border: 3px solid var(--neon); }
+
+        /* ================= CHATS PRIVADOS (FLOTANTES) ================= */
+        #private-chats-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 500;
+        }
+        .private-window {
+            position: absolute; width: 250px; height: 300px; display: flex; flex-direction: column;
+            pointer-events: auto; border: 1px solid var(--private); background: var(--dark-bg);
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+        }
+        .private-header {
+            background: var(--private); color: black; padding: 5px; font-weight: bold;
+            display: flex; justify-content: space-between; cursor: move; user-select: none;
+        }
+        .private-messages {
+            flex: 1; overflow-y: auto; font-size: 14px; padding: 8px;
+            background: rgba(0, 5, 0, 0.95); color: #fff;
+        }
+        .private-input {
+            background: #000; border: none; border-top: 1px solid var(--private);
+            color: var(--private); padding: 8px; font-family: 'VT323'; outline: none;
+        }
+
+        /* Notificación de mensaje nuevo */
+        @keyframes notify-glow { 0%, 100% { box-shadow: 0 0 5px var(--private); } 50% { box-shadow: 0 0 20px var(--private); } }
+        .notificacion-activa { animation: notify-glow 1.5s infinite; border: 2px solid var(--private) !important; }
+
+        /* ================= MAIN UI ================= */
+        #main-ui { display: none; }
+        .panel { position: fixed; border: 1px solid var(--neon); background: var(--dark-bg); color: var(--neon); z-index: 100; }
+        
+        #coords { position: fixed; top: 10px; right: 10px; font-size: 14px; opacity: 0.6; z-index: 50; color: #000; }
+        #countdown-alert { position: fixed; top: 50px; left: 50%; transform: translateX(-50%); color: red; font-size: 30px; display: none; z-index: 1000; font-weight: bold; text-shadow: 0 0 10px black; }
+
+        #chat-window { right: 20px; bottom: 60px; width: 320px; height: 400px; display: flex; flex-direction: column; }
+        #messages { flex: 1; overflow-y: auto; padding: 10px; font-size: 16px; border-bottom: 1px solid var(--neon-dim); }
+        #msg-input { background: none; border: none; color: var(--neon); padding: 10px; outline: none; font-family: 'VT323'; font-size: 18px; }
+
+        #toolbar { left: 20px; top: 20px; width: 70px; display: flex; flex-direction: column; align-items: center; padding: 15px 0; }
+        .tool-btn { width: 50px; height: 50px; background: none; border: 1px solid var(--neon-dim); color: var(--neon); cursor: pointer; margin-bottom: 10px; font-size: 24px;}
+        .tool-btn.active { background: var(--neon); color: #000; }
+        #colorPicker { width: 50px; height: 50px; border: 1px solid var(--neon); background: none; cursor: pointer; }
+
+        #status-bar { top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 30px; display: flex; gap: 30px; font-size: 22px; }
+        #taskbar { bottom: 0; width: 100%; height: 50px; display: flex; align-items: center; padding: 0 20px; border-top: 1px solid var(--neon); background: #000; justify-content: space-between; box-sizing: border-box; z-index: 1000;}
+        #taskbar-avatar { width: 35px; height: 35px; border: 1px solid var(--neon); border-radius: 50%; object-fit: cover; }
+        
+        canvas { background: #fff; cursor: crosshair; }
+        .ghost-container { position: fixed; pointer-events: none; z-index: 10; display: flex; align-items: center; gap: 5px; }
+        .ghost-avatar { width: 24px; height: 24px; border: 1px solid var(--neon); border-radius: 50%; object-fit: cover;}
+    </style>
+</head>
+<body>
+    <div id="coords">LAT: 00.0000° N | LON: 00.0000° W</div>
+    <div id="countdown-alert">SYSTEM REBOOT IN: <span id="count-num">60</span>s</div>
+
+    <div id="login-screen">
+        <div class="card-inner">
+            <div style="border-bottom: 2px solid var(--neon); margin-bottom: 20px; padding-bottom: 5px; font-size: 24px; display: flex; justify-content: space-between;">
+                <span>AERONET_ACCESS</span><span>V.4.0</span>
+            </div>
+            <div class="layout">
+                <div class="surveillance-vid-container" onclick="openAvatarModal()">
+                    <img id="current-avatar-img" src="avatars/avatar (1).jpg" alt="Avatar">
+                    <div class="change-hint">SELECT AVATAR</div>
+                </div>
+                <div class="data-fields">
+                    <div class="row"><span>STATUS:</span> <span style="color:var(--neon)">TOP SECRET</span></div>
+                    <div class="row"><span>UNIT_ID:</span> <span id="display-temp-user">UNKNOWN</span></div>
+                    <div class="row"><span>LOC:</span> <span>SECTOR_7</span></div>
+                </div>
+            </div>
+            <input type="text" id="username" placeholder="IDENTIFY SUBJECT..." autocomplete="off" oninput="document.getElementById('display-temp-user').innerText = this.value || 'UNKNOWN'">
+            <button onclick="entrar()">INITIATE UPLINK</button>
+        </div>
+    </div>
+
+    <div id="avatar-modal">
+        <div class="modal-header">
+            <span>SELECT_AVATAR_UNIT</span>
+            <span style="cursor:pointer;" onclick="closeAvatarModal()">[X]</span>
+        </div>
+        <div class="modal-body">
+            <div class="avatar-grid" id="avatar-grid-container"></div>
+        </div>
+        <div class="modal-footer">
+            <div class="loading-bar-container"><div class="loading-bar-fill"></div></div>
+            <button onclick="confirmAvatarSelection()" style="width:100%; background:var(--neon); border:none; padding:10px; font-family:'VT323'; font-size:20px; font-weight:bold; cursor:pointer;">CONFIRM SELECTION</button>
+        </div>
+    </div>
+
+    <div id="main-ui">
+        <div id="toolbar" class="panel">
+            <button class="tool-btn active" onclick="setTipo('normal', this)">🖋️</button>
+            <button class="tool-btn" onclick="setTipo('neon', this)">🌟</button>
+            <button class="tool-btn" onclick="setTipo('spray', this)">💨</button>
+            <input type="color" id="colorPicker" value="#00ff41">
+        </div>
+
+        <div id="status-bar" class="panel">
+            <span>DROPS: <span id="drops">5</span>/5</span>
+            <span>SYNC: <span id="timer">60</span>s</span>
+        </div>
+
+        <div id="chat-window" class="panel">
+            <div style="background: var(--neon); color: black; padding: 5px 10px; font-weight: bold; display: flex; justify-content: space-between;">
+                <span>NET_MESSENGER</span>
+                <span id="user-count">ONLINE: 0</span>
+            </div>
+            <div id="messages"></div>
+            <input type="text" id="msg-input" placeholder="SEND_DATA..." autocomplete="off">
+        </div>
+
+        <div id="private-chats-container"></div>
+
+        <div id="taskbar" class="panel">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img id="taskbar-avatar" src="">
+                <span>STATUS: <span style="color:var(--neon)">CONNECTED</span> // NAME: <span id="display-user"></span></span>
+            </div>
+            <div onclick="location.reload()" style="color:#ff3333; cursor:pointer; font-weight:bold;">[ LOG OUT ]</div>
+        </div>
+
+        <canvas id="pizarra"></canvas>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
