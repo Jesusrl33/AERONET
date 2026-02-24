@@ -61,7 +61,8 @@ io.on('connection', (socket) => {
     });
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
-    console.log(`🚀 AERONET_SERVER_ACTIVE_ON_PORT_${PORT}`);
+    console.log(`🚀 AERONET_SERVER_ACTIVE_ON_PORT_${10000}`);
+
 });
