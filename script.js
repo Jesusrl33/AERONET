@@ -220,6 +220,34 @@ socket.on('ghost-move', data => {
     el.style.left = data.x + 'px'; el.style.top = data.y + 'px';
 });
 
+// TRADUCTOR DE TOQUE PARA MÓVIL
+const pizarra = document.getElementById('pizarra');
+
+pizarra.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent("mousedown", {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    pizarra.dispatchEvent(mouseEvent);
+}, { passive: false });
+
+pizarra.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent("mousemove", {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    pizarra.dispatchEvent(mouseEvent);
+}, { passive: false });
+
+pizarra.addEventListener('touchend', (e) => {
+    const mouseEvent = new MouseEvent("mouseup", {});
+    pizarra.dispatchEvent(mouseEvent);
+}, { passive: false });
+
 socket.on('ghost-disconnect', id => document.getElementById(`ghost-${id}`)?.remove());
 socket.on('cuenta-atras', s => { document.getElementById('countdown-alert').style.display = 'block'; document.getElementById('count-num').innerText = s; });
 socket.on('pizarra-limpia', () => ctx.clearRect(0,0,canvas.width, canvas.height));
@@ -227,5 +255,6 @@ socket.on('linea-received', d => dibujar(d));
 
 
 initAvatarGrid();
+
 
 
