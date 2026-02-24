@@ -18,7 +18,7 @@ setTimeout(resize, 200);
 function initAvatarGrid() {
     const container = document.getElementById('avatar-grid-container');
     container.innerHTML = '';
-    for(let i=1; i<=15; i++) {
+    for(let i=1; i<=40; i++) {
         const url = `avatars/avatar (${i}).jpg`;
         const img = document.createElement('img');
         img.src = url;
@@ -125,6 +125,7 @@ socket.on('ghost-move', (d) => {
     g.style.left = d.x + 'px'; g.style.top = d.y + 'px';
 });
 socket.on('ghost-disconnect', (id) => { const g = document.getElementById(`ghost-${id}`); if(g) g.remove(); });
+
 
 
 
