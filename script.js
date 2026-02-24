@@ -3,7 +3,7 @@ const canvas = document.getElementById('pizarra');
 const ctx = canvas.getContext('2d');
 
 let usuarioActual = "";
-let avatarActual = "avatars/avatar ().jpg"; 
+let avatarActual = "avatars/avatar (1).jpg"; 
 let avatarSeleccionadoTemp = avatarActual;
 
 let dibujando = false, ultimoPunto = null, gotas = 5, tiempo = 60, tipoPincel = "normal";
@@ -153,6 +153,33 @@ function dibujar(d) {
     ctx.moveTo(d.inicio.x, d.inicio.y); ctx.lineTo(d.fin.x, d.fin.y); ctx.stroke(); ctx.shadowBlur = 0;
 }
 
+// SOPORTE PARA MÓVIL (Eventos Touch)
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // Evita que la pantalla se mueva al tocar
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const mouseEvent = new MouseEvent("mousedown", {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent("mousemove", {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => {
+    const mouseEvent = new MouseEvent("mouseup", {});
+    canvas.dispatchEvent(mouseEvent);
+});
+
 // ================= SOCKET EVENTS =================
 socket.on('update-user-count', count => document.getElementById('user-count').innerText = `ONLINE: ${count}`);
 
@@ -200,4 +227,5 @@ socket.on('linea-received', d => dibujar(d));
 
 
 initAvatarGrid();
+
 
