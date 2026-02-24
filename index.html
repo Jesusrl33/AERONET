@@ -1,127 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AERONET_CORE_V4</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
-        :root {
-            --neon: #00ff41;
-            --neon-dim: rgba(0, 255, 65, 0.2);
-            --dark-bg: rgba(5, 10, 5, 0.95);
-            --private: #ff00ff;
-        }
-
-        body {
-            margin: 0; overflow: hidden; background: #000; font-family: 'VT323', monospace; text-transform: uppercase;
-            /* Evita scroll elástico en iOS */
-            position: fixed; width: 100%; height: 100%;
-        }
-
-        /* ================= LOGIN SCREEN ================= */
-        #login-screen {
-            position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center;
-            background: url('backgroundlogingif/gif1.gif') no-repeat center center;
-            background-size: cover;
-            background-color: #000;
-        }
-        .card-inner {
-            background: rgba(0,15,0,0.9); padding: 30px; border: 2px solid var(--neon);
-            backdrop-filter: blur(10px); color: var(--neon); width: 90%; max-width: 500px;
-            box-shadow: 0 0 30px var(--neon-dim);
-            box-sizing: border-box;
-        }
-        .card-inner input { width: 100%; background: none; border: 1px solid var(--neon); color: var(--neon); padding: 10px; font-family: 'VT323'; font-size: 20px; box-sizing: border-box; outline: none; }
-        .card-inner button { width: 100%; background: var(--neon); border: none; color: black; padding: 12px; font-family: 'VT323'; font-size: 22px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-
-        .layout { display: flex; gap: 20px; margin-bottom: 25px; align-items: center; }
-        .surveillance-vid-container { position: relative; width: 120px; height: 120px; cursor: pointer; border: 2px dashed var(--neon); flex-shrink: 0; overflow: hidden; }
-        #current-avatar-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
-        .change-hint { position: absolute; inset: 0; background: rgba(0,255,65,0.4); color: black; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; font-weight: bold; font-size: 14px; text-align: center; }
-        .surveillance-vid-container:hover .change-hint { opacity: 1; }
-        
-        .data-fields { flex: 1; font-size: 18px; display: flex; flex-direction: column; gap: 5px; }
-        .row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--neon-dim); padding-bottom: 2px; }
-
-        /* ================= AVATAR MODAL ================= */
-        #avatar-modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 400px; z-index: 3000; background: #000; border: 3px solid var(--neon);
-            box-shadow: 0 0 50px #000;
-        }
-        .modal-header { background: var(--neon); color: black; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; }
-        .modal-body { padding: 15px; max-height: 60vh; overflow-y: auto; }
-        .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .avatar-option { width: 100%; aspect-ratio: 1; border: 2px solid var(--neon-dim); cursor: pointer; overflow: hidden; }
-        .avatar-option img { width: 100%; height: 100%; object-fit: cover; }
-        .avatar-option:hover { border-color: var(--neon); }
-        .avatar-option.selected { border: 3px solid var(--neon); box-shadow: 0 0 10px var(--neon); }
-
-        /* ================= MAIN UI ================= */
-        #main-ui { display: none; width: 100vw; height: 100vh; position: relative; }
-        .panel { position: fixed; border: 1px solid var(--neon); background: var(--dark-bg); color: var(--neon); z-index: 100; }
-        
-        /* Ajuste para móvil: toolbar horizontal abajo o vertical izquierda */
-        #toolbar { left: 10px; top: 70px; width: 60px; display: flex; flex-direction: column; align-items: center; padding: 10px 0; }
-        .tool-btn { width: 45px; height: 45px; background: none; border: 1px solid var(--neon-dim); color: var(--neon); cursor: pointer; margin-bottom: 10px; font-size: 20px; display: flex; align-items: center; justify-content: center; }
-        .tool-btn.active { background: var(--neon); color: #000; }
-        #colorPicker { width: 45px; height: 45px; border: 1px solid var(--neon); background: none; cursor: pointer; padding: 0; }
-
-        #chat-window { right: 10px; bottom: 60px; width: 280px; height: 300px; display: flex; flex-direction: column; transition: 0.3s; }
-        #messages { flex: 1; overflow-y: auto; padding: 8px; font-size: 14px; border-bottom: 1px solid var(--neon-dim); background: rgba(0,0,0,0.3); }
-        #msg-input { background: rgba(0,20,0,0.5); border: none; color: var(--neon); padding: 12px; outline: none; font-family: 'VT323'; font-size: 18px; }
-
-        #status-bar { top: 10px; left: 50%; transform: translateX(-50%); padding: 5px 20px; display: flex; gap: 20px; font-size: 18px; white-space: nowrap; width: auto; }
-        #taskbar { bottom: 0; width: 100%; height: 50px; display: flex; align-items: center; padding: 0 15px; border-top: 1px solid var(--neon); background: #000; justify-content: space-between; box-sizing: border-box; z-index: 1000;}
-        #taskbar-avatar { width: 30px; height: 30px; border: 1px solid var(--neon); border-radius: 50%; object-fit: cover; }
-        
-        canvas { background: #fff; touch-action: none; width: 100%; height: 100%; }
-
-        /* Media Query para pantallas pequeñas */
-        @media (max-width: 600px) {
-            #chat-window { width: calc(100% - 20px); height: 150px; bottom: 60px; right: 10px; }
-            #toolbar { top: auto; bottom: 220px; left: 10px; flex-direction: column; width: 50px; }
-            #status-bar { font-size: 14px; gap: 10px; }
-        }
-    </style>
+    <title>AERONET_V4</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="coords">LAT: 0.0000 | LON: 0.0000</div>
+    
     <div id="login-screen">
         <div class="card-inner">
-            <div style="border-bottom: 2px solid var(--neon); margin-bottom: 15px; padding-bottom: 5px; font-size: 24px; display: flex; justify-content: space-between;">
-                <span>AERONET_ACCESS</span><span>V.4.0</span>
-            </div>
-            <div class="layout">
-                <div class="surveillance-vid-container" onclick="openAvatarModal()" id="avatar-container">
-                    <img id="current-avatar-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar" style="opacity: 0.5;">
-                    <div class="change-hint" style="opacity: 1; background: none; color: var(--neon); font-size: 12px; top: auto; bottom: 5px;">[ SELECT ]</div>
+            <h2 style="border-bottom: 2px solid #00ff41; padding-bottom: 10px;">AERONET_LOGIN</h2>
+            <div class="login-layout">
+                <div class="avatar-preview-box" onclick="openAvatarModal()">
+                    <img id="current-avatar-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+                    <div class="hint">[ SELECT_AVATAR ]</div>
                 </div>
-                <div class="data-fields">
-                    <div class="row"><span>STATUS:</span> <span style="color:var(--neon)">ENCRYPTED</span></div>
-                    <div class="row"><span>UNIT_ID:</span> <span id="display-temp-user">UNKNOWN</span></div>
-                    <div class="row"><span>AVATAR:</span> <span id="avatar-name-display">NONE</span></div>
+                <div class="info-box">
+                    <p>STATUS: <span style="color:#00ff41">WAITING...</span></p>
+                    <p>ID: <span id="temp-id">UNKNOWN</span></p>
                 </div>
             </div>
-            <input type="text" id="username" placeholder="IDENTIFY SUBJECT..." autocomplete="off" oninput="document.getElementById('display-temp-user').innerText = this.value || 'UNKNOWN'">
-            <button onclick="entrar()">INITIATE UPLINK</button>
+            <input type="text" id="username" placeholder="IDENT_SUBJECT..." oninput="document.getElementById('temp-id').innerText = this.value">
+            <button onclick="entrar()">INITIATE_UPLINK</button>
         </div>
     </div>
 
-    <div id="avatar-modal">
-        <div class="modal-header">
-            <span>SELECT_AVATAR_UNIT</span>
-            <span style="cursor:pointer;" onclick="closeAvatarModal()">[X]</span>
+    <div id="avatar-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">SELECT_UNIT <span onclick="closeAvatarModal()" style="cursor:pointer">[X]</span></div>
+            <div class="avatar-grid" id="avatar-grid"></div>
+            <button onclick="confirmAvatarSelection()" class="confirm-btn">CONFIRM_SELECTION</button>
         </div>
-        <div class="modal-body">
-            <div class="avatar-grid" id="avatar-grid-container">
-                </div>
-        </div>
-        <button onclick="closeAvatarModal()" style="width:100%; background:var(--neon); border:none; padding:10px; font-family:'VT323'; font-size:20px; font-weight:bold; cursor:pointer;">CONFIRM SELECTION</button>
     </div>
 
-    <div id="main-ui">
+    <div id="main-ui" style="display:none">
         <div id="toolbar" class="panel">
             <button class="tool-btn active" onclick="setTipo('normal', this)">🖋️</button>
             <button class="tool-btn" onclick="setTipo('neon', this)">🌟</button>
@@ -135,22 +49,18 @@
         </div>
 
         <div id="chat-window" class="panel">
-            <div style="background: var(--neon); color: black; padding: 5px 10px; font-weight: bold; display: flex; justify-content: space-between; font-size: 14px;">
-                <span>NET_MESSENGER</span>
-                <span id="user-count">ONLINE: 0</span>
-            </div>
+            <div class="chat-header">NET_MSG <span id="user-count">ONLINE: 0</span></div>
             <div id="messages"></div>
             <input type="text" id="msg-input" placeholder="SEND_DATA..." autocomplete="off">
         </div>
 
-        <div id="taskbar" class="panel">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <img id="taskbar-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
-                <span style="font-size: 14px;">SYS: <span style="color:var(--neon)">ONLINE</span> // USER: <span id="display-user"></span></span>
-            </div>
-            <div onclick="location.reload()" style="color:#ff3333; cursor:pointer; font-weight:bold; font-size: 14px;">[ DISCONNECT ]</div>
-        </div>
+        <div id="private-chats-container"></div>
 
+        <div id="taskbar" class="panel">
+            <img id="taskbar-avatar" src="">
+            <span>SYS: <span style="color:#00ff41">ONLINE</span> // USER: <span id="display-user"></span></span>
+            <span onclick="location.reload()" style="color:red; cursor:pointer">[LOGOUT]</span>
+        </div>
         <canvas id="pizarra"></canvas>
     </div>
 
