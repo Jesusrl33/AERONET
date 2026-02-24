@@ -15,26 +15,19 @@ body {
     text-transform: uppercase;
 }
 
-/* --- MONITOR FRAME --- */
+/* --- MONITOR & CANVAS --- */
 .monitor-frame {
     position: fixed;
     inset: 40px 20px 80px 80px;
     background: #111;
     border: 12px solid #222;
     border-radius: 15px;
-    box-shadow: 
-        inset 0 0 50px #000, 
-        0 10px 30px rgba(0,0,0,0.8),
-        0 0 20px var(--neon-dim);
+    box-shadow: inset 0 0 50px #000, 0 10px 30px rgba(0,0,0,0.8), 0 0 20px var(--neon-dim);
     z-index: 1;
     overflow: hidden;
 }
 
-.monitor-screen {
-    position: relative;
-    width: 100%; height: 100%;
-    background: #fff;
-}
+.monitor-screen { position: relative; width: 100%; height: 100%; background: #fff; }
 
 .scanline {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -45,7 +38,7 @@ body {
 
 canvas { width: 100%; height: 100%; cursor: crosshair; }
 
-/* --- PANELES CON SOMBREADO FASE 2 --- */
+/* --- PANELES UI --- */
 .panel {
     position: fixed;
     background: var(--dark-glass);
@@ -55,10 +48,7 @@ canvas { width: 100%; height: 100%; cursor: crosshair; }
 }
 
 #toolbar { left: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; padding: 12px; }
-.tool-btn { 
-    width: 50px; height: 50px; background: #000; border: 1px solid var(--neon); 
-    color: var(--neon); font-family: 'VT323'; cursor: pointer; transition: 0.1s; 
-}
+.tool-btn { width: 50px; height: 50px; background: #000; border: 1px solid var(--neon); color: var(--neon); font-family: 'VT323'; cursor: pointer; transition: 0.1s; }
 .tool-btn.active { background: var(--neon); color: #000; box-shadow: 0 0 10px var(--neon); }
 
 #chat-window { right: 15px; bottom: 80px; width: 300px; height: 350px; display: flex; flex-direction: column; }
@@ -68,114 +58,65 @@ canvas { width: 100%; height: 100%; cursor: crosshair; }
 #taskbar { bottom: 0; width: 100%; height: 60px; display: flex; align-items: center; padding: 0 20px; background: #000; border-top: 2px solid var(--neon); box-sizing: border-box; }
 #taskbar-avatar { width: 40px; height: 40px; border: 1px solid var(--neon); border-radius: 50%; margin-right: 15px; object-fit: cover; }
 
-/* --- LOGIN SCREEN --- */
+/* --- LOGIN SYSTEM --- */
 #login-screen { 
-    position: fixed; 
-    inset: 0; 
+    position: fixed; inset: 0; 
     background: #000 url('gif1.gif') center/cover no-repeat; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
+    display: flex; align-items: center; justify-content: center; 
     z-index: 9999; 
+}
+
+.login-container {
+    display: flex; gap: 30px; align-items: stretch;
+    max-width: 900px; padding: 20px;
 }
 
 .card-inner {
     background: var(--dark-glass);
     border: 2px solid var(--neon);
-    padding: 30px;
-    width: 350px;
+    padding: 30px; width: 350px;
     text-align: center;
     box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
 }
 
+.info-panel { text-align: left; border-style: double; }
+
+.status-line {
+    font-size: 14px; color: var(--neon); margin-bottom: 5px;
+    border-left: 3px solid var(--neon); padding-left: 10px;
+}
+
 .card-inner input {
-    width: 100%;
-    background: #000;
-    border: 1px solid var(--neon);
-    color: var(--neon);
-    padding: 10px;
-    margin: 10px 0;
-    font-family: 'VT323';
-    box-sizing: border-box;
+    width: 100%; background: #000; border: 1px solid var(--neon);
+    color: var(--neon); padding: 10px; margin: 10px 0;
+    font-family: 'VT323'; box-sizing: border-box;
 }
 
 .card-inner button {
-    width: 100%;
-    background: var(--neon);
-    color: #000;
-    border: none;
-    padding: 10px;
-    font-family: 'VT323';
-    font-size: 1.2rem;
-    cursor: pointer;
-    font-weight: bold;
+    width: 100%; background: var(--neon); color: #000;
+    border: none; padding: 10px; font-family: 'VT323';
+    font-size: 1.2rem; cursor: pointer; font-weight: bold;
 }
 
-/* --- AVATAR PREVIEW --- */
+/* --- AVATAR & MODAL --- */
 .avatar-preview-box { 
-    width: 120px; 
-    height: 120px; 
-    border: 2px dashed var(--neon); 
-    margin: 0 auto 15px; 
-    cursor: pointer; 
-    position: relative; 
-    overflow: hidden; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.5);
+    width: 120px; height: 120px; border: 2px dashed var(--neon); 
+    margin: 0 auto 15px; cursor: pointer; position: relative; 
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
 }
 
-#current-avatar-img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
-}
+#current-avatar-img { width: 100%; height: 100%; object-fit: cover; }
 
-/* --- MODAL AVATARES --- */
 .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; }
 .modal-content { background: #000; border: 2px solid var(--neon); padding: 20px; width: 320px; box-shadow: 10px 10px 0px #111; }
 .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 250px; overflow-y: auto; padding: 10px; }
 .avatar-option { width: 100%; aspect-ratio: 1; border: 2px solid #333; cursor: pointer; object-fit: cover; }
 .avatar-option.selected { border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
-/* Contenedor para centrar ambos paneles */
-.login-container {
-    display: flex;
-    gap: 30px;
-    align-items: stretch;
-    max-width: 800px;
-    padding: 20px;
-}
 
-/* Ajustes para el panel de información */
-.info-panel {
-    text-align: left;
-    background: rgba(0, 5, 0, 0.9) !important;
-    border-style: double; /* Le da un toque distinto al borde */
-}
+/* --- ANIMATIONS --- */
+.blink { animation: blink-animation 1s steps(2, start) infinite; margin-top: 20px; }
+@keyframes blink-animation { to { visibility: hidden; } }
 
-.status-line {
-    font-size: 14px;
-    color: var(--neon);
-    margin-bottom: 5px;
-    border-left: 3px solid var(--neon);
-    padding-left: 10px;
-}
-
-/* Efecto de parpadeo de cursor */
-.blink {
-    animation: blink-animation 1s steps(2, start) infinite;
-    margin-top: 20px;
-}
-
-@keyframes blink-animation {
-    to { visibility: hidden; }
-}
-
-/* Responsivo: Si la pantalla es pequeña, se ponen uno arriba de otro */
 @media (max-width: 768px) {
-    .login-container {
-        flex-direction: column;
-        align-items: center;
-    }
+    .login-container { flex-direction: column; align-items: center; overflow-y: auto; }
 }
