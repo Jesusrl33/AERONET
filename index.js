@@ -9,7 +9,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST"] } });
 
-const MONGO_URI = process.env.MONGO_URI || "TU_CADENA_AQUI";
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://admin_pizarra:<db_password>@cluster0.n5ghhig.mongodb.net/?appName=Cluster0";
 mongoose.connect(MONGO_URI).then(() => console.log("📡 DB_OK")).catch(e => console.log(e));
 
 const Trazo = mongoose.model('Trazo', new mongoose.Schema({
