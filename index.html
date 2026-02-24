@@ -3,42 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AERONET_SYSTEM_v0.1</title>
+    <title>AERONET_SYSTEM_V4</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="login-screen">
-    <div class="login-container">
-        <div class="card-inner info-panel">
-            <h3>> SYSTEM_STATUS_REPORT</h3>
-            <div class="status-line">VERSION: 0.4.1_STABLE</div>
-            <div class="status-line">KERNEL: AERONET_V4</div>
-            <hr style="border: 0; border-top: 1px solid var(--neon-dim); margin: 15px 0;">
-            <p style="text-align: left; line-height: 1.4; font-size: 15px;">
-                Welcome to AERONET. This is an experimental collaborative workspace [V.0.1]. 
-                The system is built on the concept of ephemeral creation. 
-                Utilize your synchronization drops (DROPS) to interact with the grid. 
-                Your capacity to draw and communicate is limited by your uplink stability. 
-                Create, collaborate, and maintain the connection.
-            </p>
-            <div class="blink" style="text-align: left; color: var(--neon); font-size: 12px;">_WAITING_FOR_USER_AUTHENTICATION...</div>
-        </div>
 
-        <div class="card-inner">
-            <h2 style="margin:0 0 20px 0; text-align:center; letter-spacing:3px;">> ACCESS_REQUIRED</h2>
-            <div class="avatar-preview-box" onclick="openAvatarModal()">
-                <img id="current-avatar-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
-                <div style="position:absolute; bottom:0; width:100%; background:var(--neon); color:#000; text-align:center; font-size:11px; font-weight:bold;">UPLOAD_DNA</div>
+    <div id="login-screen">
+        <div class="login-container">
+            
+            <div class="card-inner info-panel">
+                <h3>> SYSTEM_STATUS_REPORT</h3>
+                <div class="status-line">VERSION: 0.4.1_STABLE</div>
+                <div class="status-line">KERNEL: AERONET_V4</div>
+                <hr style="border: 0; border-top: 1px solid var(--neon-dim); margin: 15px 0;">
+                <p style="text-align: left; line-height: 1.4; font-size: 15px;">
+                    Welcome to AERONET. This is an experimental collaborative workspace [V.0.1]. 
+                    The system is built on the concept of ephemeral creation. 
+                    Utilize your synchronization drops (DROPS) to interact with the grid. 
+                    Your capacity to draw and communicate is limited by your uplink stability. 
+                    Create, collaborate, and maintain the connection.
+                </p>
+                <div class="blink" style="text-align: left; color: var(--neon); font-size: 12px;">_WAITING_FOR_USER_AUTHENTICATION...</div>
             </div>
-            <p>> NODE: <span style="color:var(--neon)">AERO_V4</span> | ID: <span id="temp-id">---</span></p>
-            <input type="text" id="username" placeholder="ENTER_SUBJECT_ID..." autocomplete="off" oninput="document.getElementById('temp-id').innerText = this.value">
-            <button onclick="entrar()">[ START_UPLINK ]</button>
-        </div>
-    </div>
-</div>
-            <p>> NODE: <span style="color:var(--neon)">AERO_V4</span> | ID: <span id="temp-id">---</span></p>
-            <input type="text" id="username" placeholder="ENTER_SUBJECT_ID..." autocomplete="off" oninput="document.getElementById('temp-id').innerText = this.value">
-            <button onclick="entrar()">[ START_UPLINK ]</button>
+
+            <div class="card-inner">
+                <h2 style="margin:0 0 20px 0; text-align:center; letter-spacing:3px;">> ACCESS_REQUIRED</h2>
+                
+                <div class="avatar-preview-box" onclick="openAvatarModal()">
+                    <img id="current-avatar-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+                    <div style="position:absolute; bottom:0; width:100%; background:var(--neon); color:#000; text-align:center; font-size:11px; font-weight:bold;">UPLOAD_DNA</div>
+                </div>
+
+                <p>> NODE: <span style="color:var(--neon)">AERO_V4</span> | ID: <span id="temp-id">---</span></p>
+                
+                <input type="text" id="username" placeholder="ENTER_SUBJECT_ID..." autocomplete="off" 
+                       oninput="document.getElementById('temp-id').innerText = this.value">
+                
+                <button onclick="entrar()">[ START_UPLINK ]</button>
+            </div>
+
         </div>
     </div>
 
@@ -54,6 +57,7 @@
     </div>
 
     <div id="main-ui" style="display:none">
+        
         <div class="monitor-frame">
             <div class="monitor-screen">
                 <div class="scanline"></div>
@@ -85,13 +89,13 @@
                 <span onclick="location.reload()" style="color:red; cursor:pointer;">[DISCONNECT]</span>
             </div>
         </div>
+        
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
-
 
 
 
