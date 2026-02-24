@@ -9,53 +9,28 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST"] } });
 
-// --- CONEXIÓN MONGODB ---
-const MONGO_URI = process.env.MONGO_URI || "TU_CADENA_DE_CONEXION_AQUI";
-mongoose.connect(MONGO_URI).then(() => console.log("📡 DB_CONNECTED")).catch(e => console.log(e));
+const MONGO_URI = process.env.MONGO_URI || "TU_CADENA_AQUI";
+mongoose.connect(MONGO_URI).then(() => console.log("📡 DB_OK")).catch(e => console.log(e));
 
-const TrazoSchema = new mongoose.Schema({
-    inicio: { x: Number, y: Number },
-    fin: { x: Number, y: Number },
-    color: String,
-    grosor: Number,
-    tipo: String,
-    timestamp: { type: Date, default: Date.now }
-});
-const Trazo = mongoose.model('Trazo', TrazoSchema);
+const Trazo = mongoose.model('Trazo', new mongoose.Schema({
+    inicio: { x: Number, y: Number }, fin: { x: Number, y: Number },
+    color: String, tipo: String, timestamp: { type: Date, default: Date.now, expires: 86400 }
+}));
 
-// --- LÓGICA ---
-let connectedUsers = 0;
-
+let users = 0;
 io.on('connection', async (socket) => {
-    connectedUsers++;
-    io.emit('update-user-count', connectedUsers);
-
-    // Enviar historial al entrar
+    users++; io.emit('update-user-count', users);
     const historial = await Trazo.find().sort({ timestamp: 1 });
     historial.forEach(t => socket.emit('linea-received', t));
 
     socket.on('dibujar-linea', async (data) => {
         socket.broadcast.emit('linea-received', data);
-        await new Trazo(data).save(); // Persistencia
+        await new Trazo(data).save();
     });
 
-    socket.on('enviar-mensaje', (data) => {
-        io.emit('mensaje-recibido', { ...data, socketId: socket.id });
-    });
-
-    socket.on('enviar-privado', (data) => {
-        socket.to(data.toId).emit('mensaje-privado-recibido', { ...data, fromId: socket.id });
-    });
-
-    socket.on('mouse-move', (data) => {
-        socket.broadcast.emit('ghost-move', { id: socket.id, ...data });
-    });
-
-    socket.on('disconnect', () => {
-        connectedUsers--;
-        io.emit('update-user-count', connectedUsers);
-        io.emit('ghost-disconnect', socket.id);
-    });
+    socket.on('enviar-mensaje', (data) => io.emit('mensaje-recibido', data));
+    socket.on('mouse-move', (data) => socket.broadcast.emit('ghost-move', { id: socket.id, ...data }));
+    socket.on('disconnect', () => { users--; io.emit('update-user-count', users); io.emit('ghost-disconnect', socket.id); });
 });
 
-server.listen(process.env.PORT || 10000, () => console.log("🚀 SERVER_RUNNING"));
+server.listen(process.env.PORT || 10000);
